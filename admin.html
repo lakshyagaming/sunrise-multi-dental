@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Dr. Anjali's Homoeo Clinic</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f1f5f9; }
+    #page-loader { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="admin-login-page" class="admin-login-page">
+  <div class="admin-login-card">
+    <div class="admin-login-logo">
+      <div class="admin-login-logo-icon">🌿</div>
+      <h1>Clinic Admin Panel</h1>
+      <p>Dr. Anjali's Homoeo Clinic</p>
+    </div>
+    <form id="admin-login-form">
+      <div class="form-group">
+        <label>Username <span style="color:#e53e3e">*</span></label>
+        <input type="text" id="admin-user" class="form-control" placeholder="Enter username" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Password <span style="color:#e53e3e">*</span></label>
+        <input type="password" id="admin-pass" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+      </div>
+      <div id="login-error" style="display:none;background:#fee2e2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:0.85rem;margin-bottom:16px;"><i class="fa-solid fa-triangle-exclamation"></i> Invalid username or password.</div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:0.95rem;margin-top:4px;">
+        <i class="fa-solid fa-right-to-bracket"></i> Login to Admin
+      </button>
+    </form>
+    <p style="text-align:center;margin-top:20px;font-size:0.8rem;color:var(--text-light);">Default: admin / clinic123</p>
+    <div style="text-align:center;margin-top:16px;">
+      <a href="index.html" style="font-size:0.82rem;color:var(--primary);text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Back to Clinic Website</a>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="admin-dashboard-page" class="admin-dashboard" style="display:none;">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:16px;color:white;flex-shrink:0;">🌿</div>
+        <div>
+          <h2>Admin Panel</h2>
+          <p>Dr. Anjali's Clinic</p>
+        </div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <a class="admin-nav-item active" onclick="showTab('dashboard')">
+        <i class="fa-solid fa-gauge"></i> Dashboard
+      </a>
+      <a class="admin-nav-item" onclick="showTab('appointments')">
+        <i class="fa-solid fa-calendar-check"></i> Appointments
+      </a>
+      <a class="admin-nav-item" onclick="showTab('pending')">
+        <i class="fa-solid fa-clock"></i> Pending
+      </a>
+      <a class="admin-nav-item" onclick="showTab('completed')">
+        <i class="fa-solid fa-circle-check"></i> Completed
+      </a>
+    </nav>
+    <div style="padding:20px;border-top:1px solid rgba(255,255,255,0.08);">
+      <a href="index.html" style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.85rem;padding:8px 0;"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Website</a>
+      <a id="admin-logout" style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.85rem;padding:8px 0;cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 id="page-title">Dashboard Overview</h1>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:0.82rem;color:var(--text-light);" id="current-time"></span>
+        <button onclick="loadAdminDashboard()" id="refresh-appointments" class="btn btn-sm btn-outline-primary">
+          <i class="fa-solid fa-rotate-right"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- STATS -->
+      <div class="admin-stats">
+        <div class="admin-stat-card reveal">
+          <div class="admin-stat-card-label">Total Appointments</div>
+          <div class="admin-stat-card-num green" id="total-count">0</div>
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:6px;">All time bookings</div>
+        </div>
+        <div class="admin-stat-card reveal" data-delay="80">
+          <div class="admin-stat-card-label">Pending</div>
+          <div class="admin-stat-card-num orange" id="pending-count">0</div>
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:6px;">Awaiting confirmation</div>
+        </div>
+        <div class="admin-stat-card reveal" data-delay="160">
+          <div class="admin-stat-card-label">Completed</div>
+          <div class="admin-stat-card-num blue" id="completed-count">0</div>
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:6px;">Successfully treated</div>
+        </div>
+        <div class="admin-stat-card reveal" data-delay="240">
+          <div class="admin-stat-card-label">Today's Appointments</div>
+          <div class="admin-stat-card-num green" id="today-count">0</div>
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:6px;" id="today-date"></div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENT TABLE -->
+      <div class="admin-table-wrap reveal">
+        <div class="admin-table-header">
+          <h2 id="table-title">All Appointments</h2>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" id="search-appointments" placeholder="🔍 Search patient..." style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;outline:none;width:200px;" oninput="filterAppointments()">
+            <button onclick="exportCSV()" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download"></i> Export CSV</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Phone</th>
+                <th>Health Concern</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appointments-tbody">
+              <tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments yet. Bookings will appear here.</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DEMO NOTICE -->
+      <div style="margin-top:20px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px 20px;font-size:0.85rem;color:#1e40af;" class="reveal">
+        <strong><i class="fa-solid fa-circle-info"></i> About Appointments Storage</strong><br>
+        Appointments are stored in your browser's <code>localStorage</code>. They persist across sessions on the same browser. For a production backend, appointments can be connected to a REST API or database by modifying the <code>script.js</code> appointment save logic.
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;" class="reveal">
+        <a href="index.html#appointment" target="_blank" style="background:white;border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;text-decoration:none;color:var(--text-dark);transition:var(--transition);" onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:28px;margin-bottom:10px;">📅</div>
+          <div style="font-weight:700;font-size:0.9rem;">New Appointment</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:4px;">Book via public form</div>
+        </a>
+        <div onclick="clearAll()" style="background:white;border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:var(--transition);" onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+          <div style="font-weight:700;font-size:0.9rem;">Clear All Data</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:4px;">Reset all appointments</div>
+        </div>
+        <div onclick="addSampleData()" style="background:white;border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:var(--transition);" onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:28px;margin-bottom:10px;">✨</div>
+          <div style="font-weight:700;font-size:0.9rem;">Load Sample Data</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:4px;">Demo appointments</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="script.js"></script>
+<script>
+  // Admin nav tabs
+  function showTab(tab) {
+    document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+    event.target.closest('.admin-nav-item').classList.add('active');
+    const titleMap = { dashboard: 'Dashboard Overview', appointments: 'All Appointments', pending: 'Pending Appointments', completed: 'Completed Appointments' };
+    document.getElementById('page-title').textContent = titleMap[tab] || 'Dashboard';
+    document.getElementById('table-title').textContent = titleMap[tab] || 'All Appointments';
+    
+    const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+    const tbody = document.getElementById('appointments-tbody');
+    let filtered = appointments;
+    if (tab === 'pending') filtered = appointments.filter(a => a.status === 'pending');
+    if (tab === 'completed') filtered = appointments.filter(a => a.status === 'completed');
+    
+    renderTable(filtered.slice().reverse());
+  }
+
+  function renderTable(appointments) {
+    const tbody = document.getElementById('appointments-tbody');
+    if (!appointments.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments found.</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = appointments.map(a => `
+      <tr>
+        <td><strong>${a.name}</strong></td>
+        <td><a href="tel:${a.phone}" style="color:var(--secondary)">${a.phone}</a></td>
+        <td>${a.concern}</td>
+        <td>${a.date ? new Date(a.date+'T00:00:00').toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-'}</td>
+        <td>${a.time || '-'}</td>
+        <td><span class="badge badge-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span></td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          ${a.status !== 'completed' ? `<button class="action-btn action-complete" onclick="markComplete(${a.id})"><i class="fa-solid fa-check"></i> Done</button>` : ''}
+          <button class="action-btn action-delete" onclick="deleteAppointment(${a.id})"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function filterAppointments() {
+    const q = document.getElementById('search-appointments').value.toLowerCase();
+    const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+    const filtered = appointments.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.phone.includes(q) ||
+      a.concern.toLowerCase().includes(q)
+    );
+    renderTable(filtered.slice().reverse());
+  }
+
+  function clearAll() {
+    if (confirm('Delete ALL appointments? This cannot be undone.')) {
+      localStorage.removeItem('appointments');
+      loadAdminDashboard();
+    }
+  }
+
+  function addSampleData() {
+    const today = new Date().toISOString().slice(0, 10);
+    const sample = [
+      { id: 1001, name: 'Priya Sharma', phone: '9876543210', email: 'priya@email.com', concern: 'Skin Diseases (Eczema, Psoriasis, Acne)', date: today, time: '10:00 AM', status: 'pending', createdAt: new Date().toISOString() },
+      { id: 1002, name: 'Rahul Verma', phone: '9812345678', email: '', concern: 'Migraine / Headaches', date: today, time: '5:00 PM', status: 'pending', createdAt: new Date().toISOString() },
+      { id: 1003, name: 'Sunita Gupta', phone: '9876501234', email: 'sunita@gmail.com', concern: 'Thyroid Disorders', date: '2024-12-20', time: '11:00 AM', status: 'completed', createdAt: new Date().toISOString() },
+      { id: 1004, name: 'Amit Saxena', phone: '9900112233', email: '', concern: 'Allergies / Asthma', date: '2024-12-22', time: '6:00 PM', status: 'pending', createdAt: new Date().toISOString() },
+    ];
+    localStorage.setItem('appointments', JSON.stringify(sample));
+    loadAdminDashboard();
+  }
+
+  function exportCSV() {
+    const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+    if (!appointments.length) { alert('No appointments to export.'); return; }
+    const header = ['Name', 'Phone', 'Email', 'Concern', 'Date', 'Time', 'Status'];
+    const rows = appointments.map(a => [a.name, a.phone, a.email||'', a.concern, a.date||'', a.time||'', a.status]);
+    const csv = [header, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = `appointments_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  // Current time
+  function updateTime() {
+    const el = document.getElementById('current-time');
+    if (el) el.textContent = new Date().toLocaleString('en-IN', { weekday:'short', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+  setInterval(updateTime, 1000); updateTime();
+
+  // Today date
+  const todayDateEl = document.getElementById('today-date');
+  if (todayDateEl) todayDateEl.textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+</script>
+</body>
+</html>
